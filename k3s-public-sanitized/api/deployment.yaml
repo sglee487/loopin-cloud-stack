@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sn-api-server
+  labels:
+    app: sn-api-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sn-api-server
+  template:
+    metadata:
+      labels:
+        app: sn-api-server
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: sn-api-server
+        image: CHANGE_ME
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: sn-api-config
+        - secretRef:
+            name: sn-api-secrets
+        env:
+        - name: MONGODB_URL
+          value: "mongodb://$(MONGODB_USERNAME):$(MONGODB_PASSWORD)@$(MONGODB_HOST):$(MONGODB_PORT)/$(MONGODB_DB)?authSource=$(MONGODB_AUTH_DB)"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)"
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: sn-api-secrets
+              key: DB_USER
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sn-api-secrets
+              key: DB_PASSWORD
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 48080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 48080
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5 

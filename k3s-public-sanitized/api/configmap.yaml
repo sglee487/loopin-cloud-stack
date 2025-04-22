@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sn-api-config
+  namespace: sn-api
+data:
+  MONGODB_HOST: "CHANGE_ME"
+  MONGODB_PORT: "27017"
+  MONGODB_DB: "CHANGE_ME"
+  MONGODB_AUTH_DB: "CHANGE_ME"
+  POSTGRES_PORT: "5432"
+  POSTGRES_HOST: "CHANGE_ME"
+  POSTGRES_DB: "CHANGE_ME"
+  KEYCLOAK_LOG_LEVEL: "DEBUG"
+  AUTH_URL: "https://CHANGE_ME/realms/CHANGE_ME" 

@@ -1,0 +1,9 @@
+namespace: sn-auth
+
+resources:
+  - configmap.yaml
+  - deployment.yaml
+  - ingress.yaml
+  - secret.yaml
+  - service.yaml
+  - middleware.yaml 
