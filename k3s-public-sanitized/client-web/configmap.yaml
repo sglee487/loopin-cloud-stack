@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sn-client-web-config
+  namespace: sn-client-web
+data:
+  VITE_OAUTH_URL: https://CHANGE_ME
+  VITE_OAUTH_REALM: CHANGE_ME
+  VITE_OAUTH_CLIENT_ID: CHANGE_ME
+  VITE_APP_API_BASE_URL: https://CHANGE_ME/api/v1

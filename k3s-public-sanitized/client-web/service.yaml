@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sn-client-web
+  namespace: sn-client-web
+  labels:
+    app: sn-client-web
+spec:
+  type: ClusterIP
+  selector:
+    app: sn-client-web
+  ports:
+    - port: 80
+      targetPort: 80 
