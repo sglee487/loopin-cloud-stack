@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd
+  namespace: argocd
+  annotations:
+    # Traefik 전용 설정만 남깁니다.
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # gRPC-Web(h2c) 을 백엔드로 전달
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c # ← 중요 :contentReference[oaicite:0]{index=0}
+spec:
+  ingressClassName: traefik # Kubernetes ≥1.19이면 field 로 지정
+  tls:
+    - hosts:
+        - argocd.loopin.bid
+      secretName: argocd-tls
+  rules:
+    - host: argocd.loopin.bid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: http # service 의 80 포트 사용
