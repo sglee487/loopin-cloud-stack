@@ -43,6 +43,16 @@ spec:
                 name: loopin-keycloak
                 port:
                   number: 80
+    - host: web.loopin.bid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-client
+                port:
+                  number: 80
     - host: echo.loopin.bid
       http:
         paths:
