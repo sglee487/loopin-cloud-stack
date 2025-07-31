@@ -1,0 +1,22 @@
+replicaCount: 1 # 고가용성을 위해서는 replicaCount를 2 이상으로 설정
+
+tls:
+  enabled: true
+  existingSecret: loopin-bid-tls
+  usePem: true
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hostname: auth.loopin.bid
+  path: /
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/ingress.class: traefik
+  tls: true
+  servicePort: http
+
+auth:
+  adminUser: admin
+
+production: true

@@ -33,16 +33,6 @@ spec:
                 name: gateway-service
                 port:
                   number: 80
-    - host: auth.loopin.bid
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: loopin-keycloak
-                port:
-                  number: 80
     - host: web.loopin.bid
       http:
         paths:
