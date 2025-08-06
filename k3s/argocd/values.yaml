@@ -1,0 +1,22 @@
+namespace: argocd
+
+global:
+  domain: argocd.loopin.bid
+
+configs:
+  params:
+    server.insecure: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/service.serversscheme: h2c
+    extraTls:
+      - hosts:
+          - argocd.loopin.bid
+        # Based on the ingress controller used secret might be optional
+        secretName: wildcard-tls
