@@ -1,0 +1,23 @@
+persistence:
+  type: pvc
+  enabled: true
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        url: http://loki-svc.monitoring.svc.cluster.local:3100
+        access: proxy
+        isDefault: true
+      - name: Tempo
+        type: tempo
+        url: http://tempo.monitoring.svc.cluster.local:3200
+        access: proxy
+        isDefault: false
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local:80
+        access: proxy
+        isDefault: false
