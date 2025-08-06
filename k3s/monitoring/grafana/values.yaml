@@ -21,3 +21,20 @@ datasources:
         url: http://prometheus-server.monitoring.svc.cluster.local:80
         access: proxy
         isDefault: false
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  labels: {}
+  path: /
+  pathType: Prefix
+  hosts:
+    - grafana.loopin.bid
+  extraPaths: []
+  tls:
+    - secretName: wildcard-tls
+      hosts:
+        - grafana.loopin.bid
