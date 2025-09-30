@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: media-catalog-service
+  template:
+    spec:
+      containers:
+        - name: media-catalog-service
+          image: ghcr.io/sglee487/loopin-server/media-catalog-service:latest
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: R2DBC_USERNAME
+              value: "postgres"
+            - name: R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: media-catalog-service-postgresql
+                  key: postgres-password
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"

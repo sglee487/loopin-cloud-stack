@@ -1,1 +1,4 @@
 k3s-backup
+k3s\loopin-production\overlays\prod\youtube-fetcher-service\youtube-api-key-secret.yaml
+k3s\loopin-production\overlays\prod\gateway-service\gateway-keycloak-client-secret.yaml
+k3s\loopin-production\overlays\prod\playback-service\r2dbc-secret.yaml

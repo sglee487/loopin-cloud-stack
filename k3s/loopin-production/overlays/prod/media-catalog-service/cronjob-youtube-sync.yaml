@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: youtube-sync-cronjob
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: youtube-sync
+            image: ghcr.io/sglee487/loopin-server/media-catalog-service:latest
+            command: ["java"]
+            args: ["-jar", "app.jar", "--spring.profiles.active=prod", "--sync.youtube=true"]
+            env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+          restartPolicy: OnFailure

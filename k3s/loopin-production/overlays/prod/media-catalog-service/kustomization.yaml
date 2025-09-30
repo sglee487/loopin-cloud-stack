@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: loopin-production
+
+resources:
+  - ../../base/media-catalog-service
+  - cronjob-youtube-sync.yaml
+
+images:
+  - name: ghcr.io/sglee487/loopin-server/media-catalog-service
+    newTag: latest
+
+configMapGenerator:
+  - name: media-catalog-service-config
+    behavior: merge
+    files:
+      - application-prod.yml
+
+patches:
+  - path: deployment-patch.yaml
+    target:
+      kind: Deployment
+      name: media-catalog-service

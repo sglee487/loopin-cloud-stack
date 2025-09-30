@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: prod
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}

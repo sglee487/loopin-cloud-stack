@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-catalog-service
+spec:
+  selector:
+    app: media-catalog-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

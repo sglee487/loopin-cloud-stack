@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: youtube-fetcher-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: youtube-fetcher-service
+  template:
+    spec:
+      containers:
+        - name: youtube-fetcher-service
+          image: ghcr.io/sglee487/loopin-server/youtube-fetcher-service:latest
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: YOUTUBE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: youtube-api-key
+                  key: api-key
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "125m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"

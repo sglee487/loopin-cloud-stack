@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: prod
+  redis:
+    host: media-catalog-redis-service
+    port: 6379

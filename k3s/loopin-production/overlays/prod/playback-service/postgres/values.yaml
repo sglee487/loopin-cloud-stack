@@ -1,0 +1,10 @@
+primary:
+  persistence:
+    size: 2Gi
+  resources:
+    limits:
+      memory: 2Gi
+      cpu: 1000m
+    requests:
+      memory: 1Gi
+      cpu: 500m

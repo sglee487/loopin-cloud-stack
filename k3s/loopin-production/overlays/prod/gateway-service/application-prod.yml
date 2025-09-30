@@ -1,0 +1,143 @@
+server:
+  port: 8080
+  shutdown: graceful
+  reactive:
+    session:
+      cookie:
+        same-site: none
+        secure: true
+        max-age: 365d
+
+cors:
+  allowed-origins: "https://web.loopin.bid,http://localhost:11420"
+
+loopin:
+  redirect-url: https://web.loopin.bid
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 120s
+            pool:
+              max-life-time: 60s
+              max-idle-time: 15s
+              type: elastic
+          routes:
+            - id: playback-route
+              uri: http://playback-service
+              predicates:
+                - Path=/api/v1/user-play-session/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: playbackCircuitBreaker
+                    fallbackUri: forward:/playback-fallback
+            - id: media-catalog-route
+              uri: http://media-catalog-service
+              predicates:
+                - Path=/api/v1/playlists/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: mediaCatalogCircuitBreaker
+                    fallbackUri: forward:/media-catalog-fallback
+          default-filters:
+            - SaveSession
+            - TokenRelay
+            - name: Retry
+              args:
+                retries: 3
+                methods: GET
+                series: SERVER_ERROR
+                exceptions: java.io.IOException, java.util.concurrent.TimeoutException
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackOff: 500ms
+                  factor: 2
+                  basedOnPreviousValue: false
+          globalcors:
+            corsConfigurations:
+              "[/**]":
+                allowedOrigins: "https://web.loopin.bid"
+                allow-credentials: true
+                allowedHeaders: "*"
+                allowedMethods: "*"
+            add-to-simple-url-handler-mapping: true
+  session:
+    timeout: 365d
+    redis:
+      namespace: loopin:gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: gateway-service
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET}
+            scope: openid,roles
+        provider:
+          keycloak:
+            issuer-uri: https://auth.loopin.bid/realms/loopin
+  data:
+    redis:
+      connect-timeout: 2s
+      host: loopin-redis
+      port: 6379
+      timeout: 1s
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 20
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15000
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
+    instances:
+      mediaCatalogCircuitBreaker:
+        timeoutDuration: 60s
+        cancelRunningFuture: false
+logging:
+  group:
+    circuitbreaker: io.github.resilience4j, org.springframework.cloud.circuitbreaker
+  level:
+    root: debug
+    circuitbreaker: info
+    org.springframework.security: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: configprops, env, gateway, health, heapdump, info, loggers, mappings, prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,redis
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
