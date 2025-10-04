@@ -1,6 +1,75 @@
+server:
+  port: 8080
+  shutdown: graceful
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 120s
+
 spring:
-  profiles:
-    active: prod
-  redis:
-    host: media-catalog-redis-service
-    port: 6379
+  application:
+    name: media-catalog-service
+  cache:
+    type: redis
+  data:
+    redis:
+      host: media-catalog-service-redis-master
+      port: 6379
+      username: default
+      password: ${SPRING_DATA_REDIS_PASSWORD}
+      connect-timeout: 2s
+      timeout: 1s
+      repositories:
+        enabled: off
+  main:
+    allow-bean-definition-overriding: true
+  lifecycle:
+    timeout-per-shutdown-phase: 120s
+  reactor:
+    context-propagation: auto
+  r2dbc:
+    username: ${R2DBC_USERNAME}
+    password: ${R2DBC_PASSWORD}
+    url: r2dbc:postgresql://media-catalog-service-postgresql:5432/loopin_media_catalog
+    pool:
+      max-create-connection-time: 2s
+      initial-size: 5
+      max-size: 10
+  flyway:
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+    url: jdbc:postgresql://media-catalog-service-postgresql:5432/loopin_media_catalog
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth.loopin.bid/realms/loopin
+
+bucket4j:
+  enabled: true
+  cache-to-use: redis-lettuce
+  filters:
+    - cache-name: buckets
+      filter-method: webflux
+      filter-order: 350
+      url: /api/v1/playlists/youtube/.*
+      rate-limits:
+        - execute-condition: "headers.getFirst('X-Username') != 'admin'"
+          execute-predicates:
+            - METHOD=POST,PATCH
+          cache-key: >
+            headers.getFirst('X-Username')
+              ?: #request.remoteAddress?.address?.hostAddress
+          bandwidths:
+            - capacity: 5
+              time: 1
+              unit: days
+              refill-speed: interval
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+  level:
+    com.giffing.bucket4j: trace
+
+loopin:
+  youtube-service-uri: "http://youtube-fetcher-service"

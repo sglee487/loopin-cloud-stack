@@ -4,12 +4,12 @@ kind: Kustomization
 namespace: loopin-production
 
 resources:
-  - ../../base/media-catalog-service
+  - ../../../base/media-catalog-service
   - cronjob-youtube-sync.yaml
 
 images:
   - name: ghcr.io/sglee487/loopin-server/media-catalog-service
-    newTag: latest
+    newTag: 9055db816599fb2f6bbc6e9ce77a408920e99204
 
 configMapGenerator:
   - name: media-catalog-service-config

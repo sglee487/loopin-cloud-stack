@@ -1,6 +1,13 @@
+server:
+  port: 8080
+  shutdown: graceful
+  netty:
+    connection-timeout: 5s
+    idle-timeout: 120s
+
 spring:
-  profiles:
-    active: prod
+  application:
+    name: youtube-fetcher-service
+
 youtube:
-  api:
-    key: ${YOUTUBE_API_KEY}
+  api-key: ${YOUTUBE_DATA_API_KEY}

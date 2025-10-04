@@ -15,31 +15,21 @@ spec:
         app: youtube-fetcher-service
     spec:
       serviceAccountName: youtube-fetcher-sa
-      imagePullSecrets:
-        - name: ghcr-creds
       containers:
         - name: youtube-fetcher-service
           image: ghcr.io/sglee487/loopin-server/youtube-fetcher-service:4e78faaf9722d7404e572e629db10e26607b72f7
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "prod"
-            - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
-            - name: OTEL_SERVICE_NAME
-              value: "youtube-fetcher-service"
-            - name: OTEL_EXPORTER_OTLP_PROTOCOL
-              value: "grpc"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://tempo.monitoring.svc.cluster.local:4317"
-            - name: OTEL_METRICS_EXPORTER
-              value: "none"
-            - name: OTEL_LOGS_EXPORTER
-              value: "none"
           envFrom:
             - secretRef:
                 name: youtube-api-key-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
           volumeMounts:
             - name: youtube-fetcher-config-volume
               mountPath: /workspace/config

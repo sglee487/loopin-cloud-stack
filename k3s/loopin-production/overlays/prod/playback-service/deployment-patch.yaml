@@ -3,29 +3,49 @@ kind: Deployment
 metadata:
   name: playback-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: playback-service
   template:
     spec:
       containers:
-      - name: playback-service
-        image: ghcr.io/sglee487/loopin-server/playback-service:latest
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "prod"
-        - name: R2DBC_USERNAME
-          value: "postgres"
-        - name: R2DBC_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: playback-service-postgresql
-              key: postgres-password
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "125m"
-          limits:
-            memory: "512Mi"
-            cpu: "250m"
+        - name: playback-service
+          image: ghcr.io/sglee487/loopin-server/playback-service:latest
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: BPL_JVM_DIRECT_MEMORY
+              value: "128M"
+            - name: BPL_JVM_HEAP_RATIO
+              value: "0.6"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: "/workspace/config/"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
+            - name: OTEL_SERVICE_NAME
+              value: "playback-service"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo.monitoring.svc.cluster.local:4317"
+            - name: OTEL_METRICS_EXPORTER
+              value: "none"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
+            - name: R2DBC_USERNAME
+              value: "postgres"
+            - name: R2DBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: playback-service-postgresql
+                  key: postgres-password
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "200m"
+            limits:
+              memory: "1536Mi"
+              cpu: "1000m"

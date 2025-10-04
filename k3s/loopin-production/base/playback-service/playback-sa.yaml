@@ -2,4 +2,4 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: playback-sa
-  namespace: production
+  namespace: loopin-production

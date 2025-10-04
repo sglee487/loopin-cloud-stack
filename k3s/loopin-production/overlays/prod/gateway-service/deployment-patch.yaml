@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: gateway-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gateway-service
@@ -11,22 +11,45 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: ghcr.io/sglee487/loopin-server/gateway-service:9d34854f48600111e7d045871d7d4b2f84840275
+          image: ghcr.io/sglee487/loopin-server/gateway-service:latest
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "prod"
             - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: gateway-keycloak-client-secret
                   key: client-secret
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-service-redis
+                  key: redis-password
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: BPL_JVM_DIRECT_MEMORY
+              value: "128M"
+            - name: BPL_JVM_HEAP_RATIO
+              value: "0.6"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
+            - name: OTEL_SERVICE_NAME
+              value: "gateway-service"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo.monitoring.svc.cluster.local:4317"
+            - name: OTEL_METRICS_EXPORTER
+              value: "none"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "1024Mi"
+              cpu: "200m"
             limits:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "1536Mi"
+              cpu: "1000m"
       volumes:
         - name: gateway-config-volume
           configMap:

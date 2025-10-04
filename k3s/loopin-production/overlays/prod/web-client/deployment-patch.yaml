@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-client
+  namespace: loopin-production
+  labels:
+    app: web-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-client
+  template:
+    spec:
+      serviceAccountName: web-client-sa
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+        - name: web-client
+          image: ghcr.io/sglee487/loopin-client:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: VITE_API_BASE_URL
+              value: "https://api.loopin.bid"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+      volumes:
+        - name: web-client-config-volume
+          configMap:
+            name: web-client-config

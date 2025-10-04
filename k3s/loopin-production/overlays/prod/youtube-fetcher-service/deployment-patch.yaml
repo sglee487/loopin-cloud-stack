@@ -13,17 +13,33 @@ spec:
         - name: youtube-fetcher-service
           image: ghcr.io/sglee487/loopin-server/youtube-fetcher-service:latest
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
+            - name: OTEL_SERVICE_NAME
+              value: "youtube-fetcher-service"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo.monitoring.svc.cluster.local:4317"
+            - name: OTEL_METRICS_EXPORTER
+              value: "none"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"
-            - name: YOUTUBE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: youtube-api-key
-                  key: api-key
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: BPL_JVM_DIRECT_MEMORY
+              value: "128M"
+            - name: BPL_JVM_HEAP_RATIO
+              value: "0.6"
+          envFrom:
+            - secretRef:
+                name: youtube-api-key-secret
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "125m"
-            limits:
               memory: "512Mi"
-              cpu: "250m"
+              cpu: "200m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"

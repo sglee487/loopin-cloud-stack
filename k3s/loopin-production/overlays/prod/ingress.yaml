@@ -19,7 +19,7 @@ spec:
   tls:
     - hosts:
         - api.loopin.bid
-        - auth.loopin.bid
+        # - auth.loopin.bid
         - echo.loopin.bid
       secretName: loopin-bid-tls
   rules:

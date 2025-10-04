@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: media-catalog-k8s-reader
-  namespace: production
+  namespace: loopin-production
 rules:
   - apiGroups: [""]
     resources: ["pods", "services", "endpoints", "configmaps"]
@@ -13,7 +13,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: media-catalog-k8s-reader-binding
-  namespace: production
+  namespace: loopin-production
 subjects:
   - kind: ServiceAccount
     name: media-catalog-sa

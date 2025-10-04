@@ -1,3 +1,5 @@
+.secrets
+k3s/auth/realm-export.json
 k3s-backup
 k3s/loopin-production/overlays/prod/youtube-fetcher-service/youtube-api-key-secret.yaml
 k3s/loopin-production/overlays/prod/gateway-service/gateway-keycloak-client-secret.yaml

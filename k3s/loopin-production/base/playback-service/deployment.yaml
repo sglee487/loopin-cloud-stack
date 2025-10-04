@@ -15,28 +15,18 @@ spec:
         app: playback-service
     spec:
       serviceAccountName: playback-sa
-      imagePullSecrets:
-        - name: ghcr-creds
       containers:
         - name: playback-service
           image: ghcr.io/sglee487/loopin-server/playback-service:ead79043bdac454512f52a3e2e46d948c030f468
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "prod"
-            - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
-            - name: OTEL_SERVICE_NAME
-              value: "playback-service"
-            - name: OTEL_EXPORTER_OTLP_PROTOCOL
-              value: "grpc"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://tempo.monitoring.svc.cluster.local:4317"
-            - name: OTEL_METRICS_EXPORTER
-              value: "none"
-            - name: OTEL_LOGS_EXPORTER
-              value: "none"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "128Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
           volumeMounts:
             - name: playback-config-volume
               mountPath: /workspace/config

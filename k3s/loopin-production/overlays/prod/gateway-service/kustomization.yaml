@@ -7,6 +7,10 @@ resources:
   - ../../../base/gateway-service
   - gateway-keycloak-client-secret.yaml
 
+images:
+  - name: ghcr.io/sglee487/loopin-server/gateway-service
+    newTag: 9d34854f48600111e7d045871d7d4b2f84840275
+
 configMapGenerator:
   - name: gateway-service-config
     behavior: merge

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: echo-server
-  namespace: production
+  namespace: loopin-production
   labels:
     app: echo-server
 spec:
@@ -17,7 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: echo-server
-  namespace: production
+  namespace: loopin-production
 spec:
   strategy:
     type: RollingUpdate
@@ -40,8 +40,8 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: "0.5"
-              memory: "1Gi"
+              cpu: "200m"
+              memory: "256Mi"
             requests:
-              cpu: "0.25"
-              memory: "512Mi"
+              cpu: "50m"
+              memory: "128Mi"

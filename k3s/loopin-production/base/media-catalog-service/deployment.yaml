@@ -15,32 +15,22 @@ spec:
         app: media-catalog-service
     spec:
       serviceAccountName: media-catalog-sa
-      imagePullSecrets:
-        - name: ghcr-creds
       containers:
-      - name: media-catalog-service
-        image: ghcr.io/sglee487/loopin-server/media-catalog-service
-        ports:
-        - containerPort: 8080
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "prod"
-        - name: JAVA_TOOL_OPTIONS
-          value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
-        - name: OTEL_SERVICE_NAME
-          value: "media-catalog-service"
-        - name: OTEL_EXPORTER_OTLP_PROTOCOL
-          value: "grpc"
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://tempo.monitoring.svc.cluster.local:4317"
-        - name: OTEL_METRICS_EXPORTER
-          value: "none"
-        - name: OTEL_LOGS_EXPORTER
-          value: "none"
-        volumeMounts:
-        - name: media-catalog-config-volume
-          mountPath: /workspace/config
+        - name: media-catalog-service
+          image: ghcr.io/sglee487/loopin-server/media-catalog-service
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "128Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: media-catalog-config-volume
+              mountPath: /workspace/config
       volumes:
-      - name: media-catalog-config-volume
-        configMap:
-          name: media-catalog-service-config
+        - name: media-catalog-config-volume
+          configMap:
+            name: media-catalog-service-config
