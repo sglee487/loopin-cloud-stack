@@ -9,9 +9,15 @@ grafana:
   additionalDataSources:
     - name: Loki
       type: loki
-      url: http://loki-gateway.monitoring.svc.cluster.local
+      url: http://loki-gateway.monitoring.svc.cluster.local/
       access: proxy
       isDefault: false
+      jsonData:
+        timeout: 60
+        maxLines: 1000
+        httpHeaderName1: 'X-Scope-OrgID'
+      secureJsonData:
+        httpHeaderValue1: 'tenant1'
     - name: Tempo
       type: tempo
       url: http://tempo.monitoring.svc.cluster.local:3200
