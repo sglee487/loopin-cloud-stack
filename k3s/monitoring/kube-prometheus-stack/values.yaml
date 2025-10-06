@@ -16,10 +16,16 @@ grafana:
         timeout: 60
         maxLines: 1000
         httpHeaderName1: 'X-Scope-OrgID'
+        derivedFields:
+          - datasourceUid: P214B5B846CF3925F
+            matcherRegex: "\\[[^,]+,([a-fA-F0-9]{32}),"
+            name: TraceID
+            url: "$${__value.raw}"
       secureJsonData:
         httpHeaderValue1: 'tenant1'
     - name: Tempo
       type: tempo
+      uid: tempo
       url: http://tempo.monitoring.svc.cluster.local:3200
       access: proxy
       isDefault: false
