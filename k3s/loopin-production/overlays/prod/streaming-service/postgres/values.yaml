@@ -1,0 +1,23 @@
+primary:
+  persistence:
+    size: 2Gi
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+image:
+  registry: docker.io
+  repository: bitnamilegacy/postgresql
+  tag: 17.5.0-debian-12-r20
+
+auth:
+  enablePostgresUser: true
+  database: loopin_streaming
+
+global:
+  security:
+    allowInsecureImages: true

@@ -1,0 +1,30 @@
+# PersistentVolume for shared HLS storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hls-storage-pv
+  namespace: loopin-production
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hls-storage
+  hostPath:
+    path: /tmp/k8s-hls-storage
+
+---
+# PersistentVolumeClaim for shared HLS storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hls-storage-pvc
+  namespace: loopin-production
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: hls-storage

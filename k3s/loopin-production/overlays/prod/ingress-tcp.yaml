@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: srs-rtmp
+  namespace: loopin-production
+  annotations:
+    # RTMP streaming endpoint for SRS server
+    # Access via: rtmp://ingest.loopin.bid:1935/live/<stream-key>
+    # DNS: ingest.loopin.bid -> Traefik LoadBalancer IP (168.138.205.163)
+    # Note: RTMP is TCP-based, so HostSNI(`*`) matches all traffic on port 1935
+spec:
+  entryPoints:
+    - rtmp
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: srs-service
+          port: 1935

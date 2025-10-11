@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-accel
+  namespace: loopin-production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-accel
+  template:
+    metadata:
+      labels:
+        app: nginx-accel
+    spec:
+      serviceAccountName: nginx-sa
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: hls-storage
+              mountPath: /hlsroot
+              readOnly: true
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: hls-storage
+          persistentVolumeClaim:
+            claimName: hls-storage-pvc
+        - name: config
+          configMap:
+            name: nginx-accel-config

@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: streaming-k8s-reader
+  namespace: loopin-production
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "endpoints", "configmaps"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: streaming-k8s-reader-binding
+  namespace: loopin-production
+subjects:
+  - kind: ServiceAccount
+    name: streaming-sa
+roleRef:
+  kind: Role
+  name: streaming-k8s-reader
+  apiGroup: rbac.authorization.k8s.io

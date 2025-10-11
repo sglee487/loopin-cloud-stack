@@ -8,7 +8,7 @@ resources:
 
 images:
   - name: ghcr.io/sglee487/loopin-client
-    newTag: 90659cbf9f6a3689e2eb5e779d40619faf8bba48
+    newTag: 907b6c1e934182b5b8fd87470db37f54f24eb986
 
 patches:
   - path: deployment-patch.yaml

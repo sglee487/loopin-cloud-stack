@@ -9,7 +9,7 @@ resources:
 
 images:
   - name: ghcr.io/sglee487/loopin-server/youtube-fetcher-service
-    newTag: 9d34854f48600111e7d045871d7d4b2f84840275-ubuntu-22.04-arm
+    newTag: f7941fc3020afd567b98a0dd1384737a579b7798-ubuntu-22.04-arm
 
 configMapGenerator:
   - name: youtube-fetcher-service-config

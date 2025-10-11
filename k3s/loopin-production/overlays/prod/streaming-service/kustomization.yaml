@@ -4,15 +4,14 @@ kind: Kustomization
 namespace: loopin-production
 
 resources:
-  - ../../../base/gateway-service
-  - gateway-keycloak-client-secret.yaml
+  - ../../../base/streaming-service
 
 images:
-  - name: ghcr.io/sglee487/loopin-server/gateway-service
+  - name: ghcr.io/sglee487/loopin-server/streaming-service
     newTag: 052305a1598b4a2275649178f4df0e30f0e81ea3
 
 configMapGenerator:
-  - name: gateway-service-config
+  - name: streaming-service-config
     behavior: merge
     files:
       - application-prod.yml
@@ -21,4 +20,4 @@ patches:
   - path: deployment-patch.yaml
     target:
       kind: Deployment
-      name: gateway-service
+      name: streaming-service

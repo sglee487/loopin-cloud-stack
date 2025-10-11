@@ -47,6 +47,31 @@ spring:
                   args:
                     name: mediaCatalogCircuitBreaker
                     fallbackUri: forward:/media-catalog-fallback
+            - id: streaming-accel-route
+              uri: http://nginx-accel-service
+              predicates:
+                - Path=/api/v1/streams/hls/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: streamingCircuitBreaker
+                    fallbackUri: forward:/streaming-fallback
+                - name: RemoveRequestHeader
+                  args:
+                    name: Authorization
+                - name: DedupeResponseHeader
+                  args:
+                    name: Access-Control-Allow-Origin Access-Control-Allow-Credentials
+                    strategy: RETAIN_FIRST
+            - id: streaming-management-route
+              uri: http://streaming-service
+              predicates:
+                - Path=/api/v1/stream,/api/v1/stream/**,/api/v1/streams/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: streamingCircuitBreaker
+                    fallbackUri: forward:/streaming-fallback
           default-filters:
             - SaveSession
             - TokenRelay
@@ -113,7 +138,6 @@ logging:
   group:
     circuitbreaker: io.github.resilience4j, org.springframework.cloud.circuitbreaker
   level:
-    root: debug
     circuitbreaker: info
     org.springframework.security: debug
   pattern:

@@ -43,6 +43,16 @@ spec:
                 name: web-client
                 port:
                   number: 80
+    - host: ingest.loopin.bid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: srs-service
+                port:
+                  number: 1935
     - host: echo.loopin.bid
       http:
         paths:

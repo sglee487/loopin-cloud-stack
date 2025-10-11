@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaming-service-deploy
+  namespace: loopin-production
+  labels:
+    app: streaming-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streaming-service
+  template:
+    metadata:
+      labels:
+        app: streaming-service
+    spec:
+      volumes:
+        - name: hls-storage
+          persistentVolumeClaim:
+            claimName: hls-storage-pvc
+      containers:
+        - name: streaming-service
+          image: streaming-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: REDIS_HOST
+              value: "streaming-redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: DB_HOST
+              value: "loopin-postgres-service"
+            - name: ISSUER_URI
+              value: "http://keycloak-service:8080/realms/loopin"
+            - name: STREAMING_STORAGE_PATH
+              value: "/app/streams"
+            - name: SRS_SERVER_URL
+              value: "http://srs-nginx-service:1985"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-2.18.1.jar"
+            - name: OTEL_SERVICE_NAME
+              value: "streaming-service"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo-service:4317"
+            - name: OTEL_METRICS_EXPORTER
+              value: "none"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: hls-storage
+              mountPath: /app/streams
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaming-service
+  namespace: loopin-production
+spec:
+  type: ClusterIP
+  selector:
+    app: streaming-service
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080

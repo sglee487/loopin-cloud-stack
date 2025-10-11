@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srs-server
+  namespace: loopin-production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: srs-server
+  template:
+    metadata:
+      labels:
+        app: srs-server
+    spec:
+      serviceAccountName: srs-sa
+      containers:
+        - name: srs
+          image: ossrs/srs:6
+          ports:
+            - containerPort: 1935
+              name: rtmp
+            - containerPort: 1985
+              name: api
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: hls-storage
+              mountPath: /usr/local/srs/objs/nginx/html
+            - name: config
+              mountPath: /usr/local/srs/conf/srs.conf
+              subPath: srs.conf
+      volumes:
+        - name: hls-storage
+          persistentVolumeClaim:
+            claimName: hls-storage-pvc
+        - name: config
+          configMap:
+            name: srs-config

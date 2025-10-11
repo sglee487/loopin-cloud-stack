@@ -9,7 +9,7 @@ resources:
 
 images:
   - name: ghcr.io/sglee487/loopin-server/media-catalog-service
-    newTag: 9055db816599fb2f6bbc6e9ce77a408920e99204
+    newTag: f7941fc3020afd567b98a0dd1384737a579b7798-ubuntu-22.04-arm
 
 configMapGenerator:
   - name: media-catalog-service-config

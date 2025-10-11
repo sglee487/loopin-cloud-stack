@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: loopin-production
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+  - srs-sa.yaml
+  - srs-rbac.yaml

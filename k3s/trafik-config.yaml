@@ -12,6 +12,7 @@ spec:
       - "--entryPoints.web.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
       - "--entryPoints.websecure.proxyProtocol.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
       - "--entryPoints.websecure.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      - "--entryPoints.rtmp.address=:1935/tcp"
       - "--accesslog=true"
       - "--accesslog.format=json"
       - "--accesslog.fields.defaultmode=keep"
@@ -20,3 +21,9 @@ spec:
       - "--accesslog.fields.headers.names.Referer=keep"
       - "--accesslog.fields.headers.names.Authorization=keep"
       - "--accesslog.fields.headers.names.Cookie=keep"
+    ports:
+      rtmp:
+        port: 1935
+        expose: true
+        exposedPort: 1935
+        protocol: TCP
