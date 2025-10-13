@@ -8,6 +8,8 @@ data:
     listen 1935;
     max_connections 1000;
     daemon off;
+    srs_log_tank        console;
+    srs_log_level       info;
 
     http_api {
         enabled on;
@@ -20,7 +22,7 @@ data:
         dir /usr/local/srs/objs/nginx/html;
     }
 
-    vhost __defaultVhost__ {
+    vhost ingest.loopin.bid {
         hls {
             enabled on;
             hls_path /usr/local/srs/objs/nginx/html;
@@ -63,7 +65,6 @@ data:
                 vprofile main; vpreset veryfast;
                 acodec aac; abitrate 128; asample_rate 44100; achannels 2;
                 oformat flv;
-                # v6 문서의 정식 문법(출력 URL 템플릿)
                 output rtmp://127.0.0.1:[port]/abr/[app]?vhost=[vhost]/[stream]_720p;
             }
 
@@ -92,7 +93,7 @@ data:
 
         http_hooks {
             enabled on;
-            on_publish http://streaming-service/api/v1/hooks/on_publish;
-            on_unpublish http://streaming-service/api/v1/hooks/on_unpublish;
+            on_publish http://streaming-service:80/api/v1/hooks/on_publish;
+            on_unpublish http://streaming-service:80/api/v1/hooks/on_unpublish;
         }
     }
