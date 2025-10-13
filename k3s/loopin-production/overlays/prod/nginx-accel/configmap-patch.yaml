@@ -63,8 +63,8 @@ data:
           add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
           add_header Access-Control-Allow-Headers "Range" always;
           
-          # 캐시 헤더
-          add_header Cache-Control "public, max-age=10";
+          # 캐시 헤더 - 실시간 스트림은 no-cache
+          add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
           
           # MIME 타입
           types {
