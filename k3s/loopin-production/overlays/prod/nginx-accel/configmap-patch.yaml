@@ -58,6 +58,12 @@ data:
           internal;
           alias /hlsroot/;
 
+          # HLS 라이브 스트리밍을 위해 파일 캐시 완전히 비활성화
+          open_file_cache off;
+          open_file_cache_valid off;
+          open_file_cache_min_uses 1;
+          open_file_cache_errors off;
+
           # CORS 헤더
           add_header Access-Control-Allow-Origin "*" always;
           add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
