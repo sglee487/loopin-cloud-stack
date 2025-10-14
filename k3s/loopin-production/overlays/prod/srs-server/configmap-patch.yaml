@@ -9,7 +9,7 @@ data:
     max_connections 1000;
     daemon off;
     srs_log_tank        console;
-    srs_log_level       info;
+    srs_log_level       trace;
 
     http_api {
         enabled on;
@@ -26,11 +26,11 @@ data:
         hls {
             enabled on;
             hls_path /usr/local/srs/objs/nginx/html;
-            hls_fragment 4;
-            hls_window 20;
+            hls_fragment 2;
+            hls_window 12;
 
-            hls_ctx off;
-            hls_ts_ctx off;
+            hls_ctx on;
+            hls_ts_ctx on;
 
             hls_m3u8_file [app]/[stream]/index.m3u8;
             hls_ts_file [app]/[stream]/[seq].ts;
@@ -38,45 +38,23 @@ data:
             hls_acodec aac;
             hls_vcodec h264;
             hls_cleanup on;
-            hls_dispose 120;
-            hls_wait_keyframe on;
+            hls_dispose 30;
+            hls_wait_keyframe off;
         }
 
         transcode live {
             enabled on;
             ffmpeg /usr/local/srs/objs/ffmpeg/bin/ffmpeg;
 
-            engine 1080p {
-                enabled on;
-                iformat flv;
-                vcodec libx264; vbitrate 3125; vfps 60; vwidth 1920; vheight 1080;
-                vparams { g 240; sc_threshold 0; }
-                vprofile main; vpreset veryfast;
-                acodec aac; abitrate 192; asample_rate 44100; achannels 2;
-                oformat flv;
-                output rtmp://127.0.0.1:[port]/abr/[app]?vhost=[vhost]/[stream]_1080p;
-            }
-
             engine 720p {
                 enabled on;
                 iformat flv;
                 vcodec libx264; vbitrate 1750; vfps 60; vwidth 1280; vheight 720;
                 vparams { g 240; sc_threshold 0; }
-                vprofile main; vpreset veryfast;
+                vprofile main; vpreset ultrafast;
                 acodec aac; abitrate 128; asample_rate 44100; achannels 2;
                 oformat flv;
                 output rtmp://127.0.0.1:[port]/abr/[app]?vhost=[vhost]/[stream]_720p;
-            }
-
-            engine 480p {
-                enabled on;
-                iformat flv;
-                vcodec libx264; vbitrate 875; vfps 30; vwidth 854; vheight 480;
-                vparams { g 120; sc_threshold 0; }
-                vprofile main; vpreset veryfast;
-                acodec aac; abitrate 96; asample_rate 44100; achannels 2;
-                oformat flv;
-                output rtmp://127.0.0.1:[port]/abr/[app]?vhost=[vhost]/[stream]_480p;
             }
 
             engine 360p {
@@ -84,7 +62,7 @@ data:
                 iformat flv;
                 vcodec libx264; vbitrate 300; vfps 30; vwidth 640; vheight 360;
                 vparams { g 60; sc_threshold 0; }
-                vprofile main; vpreset fast;
+                vprofile main; vpreset ultrafast;
                 acodec aac; abitrate 64; asample_rate 44100; achannels 2;
                 oformat flv;
                 output rtmp://127.0.0.1:[port]/abr/[app]?vhost=[vhost]/[stream]_360p;

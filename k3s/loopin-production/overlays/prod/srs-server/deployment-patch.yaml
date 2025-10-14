@@ -26,10 +26,10 @@ spec:
           resources:
             requests:
               memory: "512Mi"
-              cpu: "200m"
+              cpu: "500m"
             limits:
               memory: "2Gi"
-              cpu: "2000m"
+              cpu: "3000m"
           volumeMounts:
             - name: hls-storage
               mountPath: /usr/local/srs/objs/nginx/html

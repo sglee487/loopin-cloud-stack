@@ -8,7 +8,7 @@ resources:
 
 images:
   - name: ghcr.io/sglee487/loopin-server/streaming-service
-    newTag: 052305a1598b4a2275649178f4df0e30f0e81ea3
+    newTag: 95858e4b9bd75f0726691365b8698a4616a12832
 
 configMapGenerator:
   - name: streaming-service-config
