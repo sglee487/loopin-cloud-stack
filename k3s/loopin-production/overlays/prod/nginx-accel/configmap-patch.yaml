@@ -57,24 +57,36 @@ data:
         location /_internal/hls/ {
           internal;
           alias /hlsroot/;
-          
+
           # CORS 헤더
           add_header Access-Control-Allow-Origin "*" always;
           add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
           add_header Access-Control-Allow-Headers "Range" always;
-          
-          # 캐시 헤더 - 실시간 스트림은 no-cache
-          add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
-          
-          # MIME 타입
-          types {
-            application/vnd.apple.mpegurl m3u8;
-            video/mp2t ts;
-            application/octet-stream m4s;
+
+          # m3u8 파일: 캐싱 최소화 (라이브 스트리밍)
+          location ~ \.m3u8$ {
+            add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+            add_header Pragma "no-cache" always;
+            add_header Expires "0" always;
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Content-Type application/vnd.apple.mpegurl;
           }
-          
-          # Range request 지원
-          add_header Accept-Ranges bytes;
+
+          # ts 파일: 캐싱 허용 (세그먼트는 변경되지 않음)
+          location ~ \.ts$ {
+            add_header Cache-Control "public, max-age=86400" always;
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Content-Type video/mp2t;
+            add_header Accept-Ranges bytes;
+          }
+
+          # m4s 파일: 캐싱 허용
+          location ~ \.m4s$ {
+            add_header Cache-Control "public, max-age=86400" always;
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Content-Type application/octet-stream;
+            add_header Accept-Ranges bytes;
+          }
         }
         
         # Health check
